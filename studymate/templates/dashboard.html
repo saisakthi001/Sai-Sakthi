@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Dashboard – StudyMate{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Good Morning, {{ session['user_name'] }}! 👋</h1>
+    <p class="subtitle">Here is your daily study overview. Keep up the consistent momentum today!</p>
+  </div>
+</div>
+
+<!-- 4 Key Summary Cards -->
+<div class="metrics-grid">
+  <div class="metric-card">
+    <div class="metric-icon-wrap blue">📚</div>
+    <div class="metric-body">
+      <span class="metric-label">Total Subjects</span>
+      <div class="metric-value">{{ total_subjects }}</div>
+      <span class="metric-sub">enrolled college courses</span>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-icon-wrap emerald">✅</div>
+    <div class="metric-body">
+      <span class="metric-label">Topics Completed</span>
+      <div class="metric-value">{{ completed_topics }} <small>/ {{ total_topics }}</small></div>
+      <span class="metric-sub">syllabus topics mastered</span>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-icon-wrap violet">⏱️</div>
+    <div class="metric-body">
+      <span class="metric-label">Today's Study Time</span>
+      <div class="metric-value">{{ today_study_time }}</div>
+      <span class="metric-sub">tracked sessions today</span>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-icon-wrap amber">📈</div>
+    <div class="metric-body">
+      <span class="metric-label">Overall Progress</span>
+      <div class="metric-value">{{ overall_progress }}%</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" style="width: {{ overall_progress }}%;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Two Columns: Today's Schedule & Subject Progress -->
+<div class="dashboard-grid">
+  <!-- Today's Study Schedule -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Today's Schedule</h2>
+      <a href="{{ url_for('schedule') }}" class="card-action">View Full Calendar →</a>
+    </div>
+
+    {% if today_sessions %}
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Subject</th>
+              <th>Topic</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in today_sessions %}
+            <tr>
+              <td class="font-mono">{{ s['start_time'] }}</td>
+              <td>
+                <span class="subject-tag" style="border-left: 3px solid {{ s['subject_color'] }};">
+                  {{ s['subject_name'] }}
+                </span>
+              </td>
+              <td>{{ s['topic'] }}</td>
+              <td>
+                <span class="status-pill {{ s['status'] | lower }}">
+                  {{ s['status'] }}
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <p>No study sessions scheduled for today. Take a break or add a session in the Schedule tab!</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Subject Progress Breakdown -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Subject Progress</h2>
+      <a href="{{ url_for('topics') }}" class="card-action">Checklist →</a>
+    </div>
+
+    <div class="subject-progress-list">
+      {% for sp in subject_progress %}
+      <div class="subject-progress-item">
+        <div class="sp-header">
+          <span class="sp-name">{{ sp['name'] }}</span>
+          <span class="sp-pct">{{ sp['percentage'] }}% ({{ sp['completed'] }}/{{ sp['total'] }})</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" style="width: {{ sp['percentage'] }}%; background-color: {{ sp['color'] }};"></div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

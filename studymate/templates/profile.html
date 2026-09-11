@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Profile – StudyMate{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Profile & Settings</h1>
+  <p class="subtitle">Manage your student information, university details, and account settings.</p>
+</div>
+
+<div class="profile-layout">
+  <div class="profile-card">
+    <div class="profile-avatar-large">
+      {{ user['name'][:2] | upper if user['name'] else 'ST' }}
+    </div>
+    <h3>{{ user['name'] }}</h3>
+    <p class="text-muted">{{ user['email'] }}</p>
+    <div class="profile-meta">
+      <p>🏫 {{ user['college'] }}</p>
+      <p>🎓 {{ user['course'] }}</p>
+      <p>📅 {{ user['year'] }}</p>
+    </div>
+  </div>
+
+  <div class="card profile-form-card">
+    <div class="card-header">
+      <h2>Edit Student Information</h2>
+    </div>
+
+    <form action="{{ url_for('profile') }}" method="POST">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Student Name</label>
+          <input type="text" id="name" name="name" value="{{ user['name'] }}" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" value="{{ user['email'] }}" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="college">College / University Name</label>
+        <input type="text" id="college" name="college" value="{{ user['college'] }}">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="course">Course / Major</label>
+          <input type="text" id="course" name="course" value="{{ user['course'] }}">
+        </div>
+        <div class="form-group">
+          <label for="year">Academic Year</label>
+          <input type="text" id="year" name="year" value="{{ user['year'] }}">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+{
+  "name": "StudyMate – Student Study Planner",
+  "description": "A complete, modern, responsive Student Study Planner website for college students to manage subjects, study schedules, topic progress, tasks, and daily study statistics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

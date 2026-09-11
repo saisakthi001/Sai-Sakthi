@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}Tasks – StudyMate{% endblock %}
+
+{% block content %}
+<div class="page-header flex-between">
+  <div>
+    <h1>Tasks</h1>
+    <p class="subtitle">Keep track of college assignments, project submissions, and study prep deadlines.</p>
+  </div>
+  <button class="btn btn-primary" onclick="document.getElementById('add-task-modal').style.display='flex'">+ Add Task</button>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>All Tasks</h2>
+  </div>
+
+  {% if tasks %}
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Subject</th>
+          <th>Due Date</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in tasks %}
+        <tr class="{% if t['status'] == 'Completed' %}row-completed{% endif %}">
+          <td>
+            <div class="task-title-wrap">
+              <strong>{{ t['name'] }}</strong>
+            </div>
+          </td>
+          <td>
+            <span class="subject-tag" style="border-left: 3px solid {{ t['subject_color'] }};">
+              {{ t['subject_name'] }}
+            </span>
+          </td>
+          <td>{{ t['due_date'] }}</td>
+          <td>
+            <span class="priority-badge priority-{{ t['priority'] | lower }}">
+              {{ t['priority'] }}
+            </span>
+          </td>
+          <td>
+            <form action="{{ url_for('toggle_task', task_id=t['id']) }}" method="POST">
+              <button type="submit" class="status-btn {{ t['status'] | lower }}">
+                {{ t['status'] }}
+              </button>
+            </form>
+          </td>
+          <td>
+            <form action="{{ url_for('delete_task', task_id=t['id']) }}" method="POST" onsubmit="return confirm('Delete task?');">
+              <button type="submit" class="icon-btn-delete" title="Delete Task">🗑️</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p>No tasks yet. You're all caught up! 🎉</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Add Task Modal -->
+<div id="add-task-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Add New Task</h3>
+      <button class="close-btn" onclick="document.getElementById('add-task-modal').style.display='none'">✕</button>
+    </div>
+    <form action="{{ url_for('tasks') }}" method="POST">
+      <div class="form-group">
+        <label for="name">Task Name *</label>
+        <input type="text" id="name" name="name" required placeholder="e.g. Complete Python assignment">
+      </div>
+      <div class="form-group">
+        <label for="subject_id">Subject *</label>
+        <select id="subject_id" name="subject_id" required>
+          {% for sub in subjects %}
+          <option value="{{ sub['id'] }}">{{ sub['name'] }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="due_date">Due Date *</label>
+          <input type="date" id="due_date" name="due_date" required>
+        </div>
+        <div class="form-group">
+          <label for="priority">Priority *</label>
+          <select id="priority" name="priority">
+            <option value="Low">Low</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('add-task-modal').style.display='none'">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Task</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

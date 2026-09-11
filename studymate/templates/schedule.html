@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Study Schedule – StudyMate{% endblock %}
+
+{% block content %}
+<div class="page-header flex-between">
+  <div>
+    <h1>Study Schedule</h1>
+    <p class="subtitle">Plan your daily study hours, lecture review blocks, and exam prep.</p>
+  </div>
+  <button class="btn btn-primary" onclick="document.getElementById('add-session-modal').style.display='flex'">+ Schedule Study Session</button>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h2>All Scheduled Sessions</h2>
+  </div>
+
+  {% if sessions %}
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Subject</th>
+          <th>Topic</th>
+          <th>Notes</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in sessions %}
+        <tr>
+          <td>{{ s['date'] }}</td>
+          <td class="font-mono">{{ s['start_time'] }} - {{ s['end_time'] }}</td>
+          <td>
+            <span class="subject-tag" style="border-left: 3px solid {{ s['subject_color'] }};">
+              {{ s['subject_name'] }}
+            </span>
+          </td>
+          <td><strong>{{ s['topic'] }}</strong></td>
+          <td class="text-muted">{{ s['notes'] or '-' }}</td>
+          <td>
+            <form action="{{ url_for('toggle_session', session_id=s['id']) }}" method="POST" style="display:inline;">
+              <button type="submit" class="status-btn {{ s['status'] | lower }}">
+                {{ s['status'] }}
+              </button>
+            </form>
+          </td>
+          <td>
+            <form action="{{ url_for('delete_session', session_id=s['id']) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this session?');">
+              <button type="submit" class="icon-btn-delete" title="Delete">🗑️</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p>No study sessions scheduled yet. Click "+ Schedule Study Session" above to add your first study slot!</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Modal for adding Study Session -->
+<div id="add-session-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Schedule Study Session</h3>
+      <button class="close-btn" onclick="document.getElementById('add-session-modal').style.display='none'">✕</button>
+    </div>
+    <form action="{{ url_for('schedule') }}" method="POST">
+      <div class="form-group">
+        <label for="subject_id">Subject *</label>
+        <select id="subject_id" name="subject_id" required>
+          {% for sub in subjects %}
+          <option value="{{ sub['id'] }}">{{ sub['name'] }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="topic">Topic to Study *</label>
+        <input type="text" id="topic" name="topic" required placeholder="e.g. Loops, Matrices, Newton Laws">
+      </div>
+      <div class="form-group">
+        <label for="date">Date *</label>
+        <input type="date" id="date" name="date" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="start_time">Start Time *</label>
+          <input type="text" id="start_time" name="start_time" placeholder="08:00 AM" required>
+        </div>
+        <div class="form-group">
+          <label for="end_time">End Time *</label>
+          <input type="text" id="end_time" name="end_time" placeholder="09:30 AM" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <input type="text" id="notes" name="notes" placeholder="e.g. Complete textbook chapter exercises">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('add-session-modal').style.display='none'">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add to Schedule</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

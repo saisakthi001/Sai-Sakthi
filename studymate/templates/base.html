@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}StudyMate – Student Study Planner{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <span class="brand-icon">🎓</span>
+        <div class="brand-info">
+          <h2>StudyMate</h2>
+          <p>College Study Planner</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-menu">
+        <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+          <span class="icon">📊</span>
+          <span>Dashboard</span>
+        </a>
+        <a href="{{ url_for('subjects') }}" class="nav-link {% if request.endpoint == 'subjects' %}active{% endif %}">
+          <span class="icon">📚</span>
+          <span>Subjects</span>
+        </a>
+        <a href="{{ url_for('schedule') }}" class="nav-link {% if request.endpoint == 'schedule' %}active{% endif %}">
+          <span class="icon">📅</span>
+          <span>Study Schedule</span>
+        </a>
+        <a href="{{ url_for('topics') }}" class="nav-link {% if request.endpoint == 'topics' %}active{% endif %}">
+          <span class="icon">✅</span>
+          <span>Topics / Progress</span>
+        </a>
+        <a href="{{ url_for('tasks') }}" class="nav-link {% if request.endpoint == 'tasks' %}active{% endif %}">
+          <span class="icon">📝</span>
+          <span>Tasks</span>
+        </a>
+        <a href="{{ url_for('profile') }}" class="nav-link {% if request.endpoint == 'profile' %}active{% endif %}">
+          <span class="icon">👤</span>
+          <span>Profile / Settings</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <div class="user-avatar">{{ session['user_name'][:2] | upper if session['user_name'] else 'ST' }}</div>
+          <div class="user-text">
+            <strong>{{ session['user_name'] }}</strong>
+            <small>Student</small>
+          </div>
+        </div>
+        <a href="{{ url_for('logout') }}" class="logout-btn" title="Logout">🚪</a>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-container">
+            {% for category, message in messages %}
+              <div class="flash-alert flash-{{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
